@@ -1,0 +1,429 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Первообразные и интегралы — справочник, домашнее задание, применение</title>
+  <meta name="description" content="Справочник по первообразным и интегралам, домашнее задание с подробными решениями, применение интегралов на практике и что ждёт в вузе.">
+
+  <!-- KaTeX (нужен интернет), версия 0.16.9 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+  <script defer src="data.js"></script>
+  <script defer src="app.js"></script>
+
+  <style>
+    .tabs { max-width: 1180px; margin: 0 auto; padding: 18px 24px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab { font: inherit; font-weight: 700; cursor: pointer; padding: 10px 22px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); transition: .2s; }
+    .tab:hover { color: var(--brand); border-color: var(--brand); }
+    .tab[aria-selected="true"] { color: #fff; border-color: transparent; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: var(--shadow); }
+    .panel[hidden] { display: none; }
+    .layout.wide-off { grid-template-columns: 1fr; max-width: 920px; }
+    .layout.wide-off .toc { display: none; }
+
+    .table-tools { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 6px 0 14px; }
+    .btn--main { font-weight: 700; color: #fff; border: 0; padding: 10px 20px; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: var(--shadow); }
+    .btn--main:hover { color: #fff; filter: brightness(1.08); }
+    .dual .anti, .dual .gap { display: none; }
+    .dual.show-anti .anti, .dual.show-anti .gap { display: table-cell; animation: slideIn .35s ease; }
+    .dual.show-anti .gap { width: 44px; text-align: center; padding: 0; color: var(--brand); font-weight: 800; background: var(--brand-soft); }
+    .dual.show-anti th.anti { background: var(--ok-soft); color: var(--ok); }
+    .dual.show-anti td.anti { background: color-mix(in srgb, var(--ok-soft) 45%, transparent); }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+    .link-demo { margin-top: 12px; padding: 14px 20px; border-radius: 14px; background: var(--brand-soft); border: 1px dashed var(--brand); overflow-x: auto; }
+    .link-demo .katex-display { margin: .4em 0; }
+
+    details ol.sol { list-style: none; counter-reset: st; padding-left: 0; }
+    details ol.sol > li { counter-increment: st; position: relative; padding: 4px 0 10px 40px; }
+    details ol.sol > li::before { content: counter(st); position: absolute; left: 0; top: 4px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: .82rem; font-weight: 700; background: var(--brand-soft); color: var(--brand); }
+    .why { display: block; color: var(--muted); font-size: .93rem; margin-bottom: 2px; }
+    .check { padding: 8px 14px; border-radius: 10px; background: var(--brand-soft); font-size: .95rem; }
+    details > .check { margin-bottom: 14px; }
+    .level { margin-left: auto; font-size: .78rem; font-weight: 700; color: var(--muted); }
+    .hw-intro { padding: 18px 22px; border-radius: var(--radius); margin-bottom: 24px; background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+    .answers { columns: 2; column-gap: 28px; margin: 0; padding-left: 22px; }
+    .answers li { padding: 4px 0; break-inside: avoid; }
+
+    .app-card .ico { font-size: 1.8rem; line-height: 1; }
+    .app-card h3 { margin-top: 8px; }
+    .app-card .katex-display { margin: .6em 0; }
+    .years { display: grid; gap: 14px; margin-top: 14px; }
+    .year { background: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--brand); border-radius: var(--radius); padding: 14px 20px; box-shadow: var(--shadow); }
+    .year h3 { margin: 0 0 6px; }
+    .year ul { margin: 6px 0 0; padding-left: 20px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .tag { padding: 4px 12px; border-radius: 99px; background: var(--brand-soft); color: var(--brand); font-size: .88rem; font-weight: 600; }
+
+    @media (max-width: 640px) {
+      .tabs { padding: 14px 14px 0; }
+      .answers { columns: 1; }
+      #toggleSolutions { display: inline-block !important; font-size: .8rem; padding: 7px 10px; }
+    }
+    @media print {
+      .tabs, .table-tools { display: none; }
+      .panel[hidden] { display: block; }
+      .dual .anti, .dual .gap { display: table-cell !important; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#top">∫ Интегралы</a>
+  <div class="topbar__actions">
+    <button class="btn" id="toggleSolutions" type="button">Раскрыть все решения</button>
+    <button class="btn btn--icon" id="themeToggle" type="button" aria-label="Переключить тему">◐</button>
+    <button class="btn btn--icon" id="printBtn" type="button" aria-label="Печать">🖨</button>
+  </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="Разделы сайта">
+  <button class="tab" role="tab" data-tab="ref" aria-selected="true" type="button">📘 Справочник</button>
+  <button class="tab" role="tab" data-tab="hw" aria-selected="false" type="button">✏️ Домашнее задание</button>
+  <button class="tab" role="tab" data-tab="practice" aria-selected="false" type="button">🚀 Где это применяется</button>
+</div>
+
+<div class="layout" id="top">
+
+  <nav class="toc" aria-label="Содержание">
+    <p class="toc__title">Содержание</p>
+    <ol>
+      <li><a href="#basics">Основные понятия</a></li>
+      <li><a href="#table">Производные и первообразные</a></li>
+      <li><a href="#rules">Правила интегрирования</a></li>
+      <li><a href="#newton">Формула Ньютона–Лейбница</a></li>
+      <li><a href="#examples">Разбор примеров</a></li>
+      <li><a href="#algorithm">Алгоритм решения</a></li>
+    </ol>
+  </nav>
+
+  <main class="content">
+
+    <!-- ===== ВКЛАДКА: СПРАВОЧНИК ===== -->
+    <div class="panel" data-panel="ref">
+
+      <section class="hero">
+        <h1>Первообразная и интеграл</h1>
+        <p>Таблицы производных и первообразных, правила, формула Ньютона–Лейбница и пять типовых задач с подробным решением.</p>
+        <div class="hero__formula">\[\int f(x)\,dx = F(x) + C,\qquad F'(x)=f(x)\]</div>
+      </section>
+
+      <section id="basics">
+        <h2><span class="num">1</span>Основные понятия</h2>
+        <div class="grid grid--2">
+          <article class="card">
+            <h3>Первообразная</h3>
+            <p>Функция \(F(x)\) — первообразная функции \(f(x)\) на промежутке, если для всех \(x\) из него
+              \[F'(x)=f(x).\]</p>
+          </article>
+          <article class="card">
+            <h3>Неопределённый интеграл</h3>
+            <p>Множество всех первообразных:
+              \[\int f(x)\,dx = F(x)+C,\] где \(C\) — произвольная постоянная.</p>
+          </article>
+        </div>
+        <div class="note note--tip"><strong>Проверка.</strong> Продифференцируйте ответ: должна получиться исходная подынтегральная функция.</div>
+      </section>
+
+      <section id="table">
+        <h2><span class="num">2</span>Производные и первообразные</h2>
+        <div class="link-demo">
+          \[F(x)\ \xrightarrow{\ \text{производная}\ }\ F'(x)=f(x)\ \xrightarrow{\ \text{интеграл}\ }\ F(x)+C\]
+        </div>
+
+        <div class="table-tools">
+          <button class="btn btn--main" id="toggleAnti" type="button" aria-expanded="false">Показать таблицу первообразных →</button>
+          <span class="muted">Справа в тех же строках появится интеграл от производной.</span>
+        </div>
+
+        <div class="table-wrap">
+          <table class="dual" id="dualTable">
+            <thead>
+              <tr>
+                <th>Функция \(F(x)\)</th>
+                <th>Производная \(F'(x)\)</th>
+                <th class="gap">⇒</th>
+                <th class="anti">Интеграл</th>
+                <th class="anti">Первообразная</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>\(C\)</td><td>\(0\)</td><td class="gap">⇒</td><td class="anti">\(\int 0\,dx\)</td><td class="anti">\(C\)</td></tr>
+              <tr><td>\(kx\)</td><td>\(k\)</td><td class="gap">⇒</td><td class="anti">\(\int k\,dx\)</td><td class="anti">\(kx+C\)</td></tr>
+              <tr><td>\(x^{n}\)</td><td>\(n x^{n-1}\)</td><td class="gap">⇒</td><td class="anti">\(\int x^{n-1}\cdot n\,dx\)</td><td class="anti">\(x^{n}+C\)</td></tr>
+              <tr><td>\(\dfrac{x^3}{3}\)</td><td>\(x^2\)</td><td class="gap">⇒</td><td class="anti">\(\int x^2dx\)</td><td class="anti">\(\dfrac{x^3}{3}+C\)</td></tr>
+              <tr><td>\(\ln|x|\)</td><td>\(\dfrac1x\)</td><td class="gap">⇒</td><td class="anti">\(\int \dfrac{dx}{x}\)</td><td class="anti">\(\ln|x|+C\)</td></tr>
+              <tr><td>\(-\dfrac1x\)</td><td>\(\dfrac1{x^2}\)</td><td class="gap">⇒</td><td class="anti">\(\int \dfrac{dx}{x^2}\)</td><td class="anti">\(-\dfrac1x+C\)</td></tr>
+              <tr><td>\(\sqrt{x}\)</td><td>\(\dfrac1{2\sqrt{x}}\)</td><td class="gap">⇒</td><td class="anti">\(\int \dfrac{dx}{2\sqrt{x}}\)</td><td class="anti">\(\sqrt{x}+C\)</td></tr>
+	      <tr><td>\(2\sqrt{x}\)</td><td>\(\dfrac1{\sqrt{x}}\)</td><td class="gap">⇒</td><td class="anti">\(\int \dfrac{dx}{\sqrt{x}}\)</td><td class="anti">\(2\sqrt{x}+C\)</td></tr>
+              <tr><td>\(\dfrac23x\sqrt{x}\)</td><td>\(\sqrt{x}\)</td><td class="gap">⇒</td><td class="anti">\(\int \sqrt{x}\,dx\)</td><td class="anti">\(\dfrac23x\sqrt{x}+C\)</td></tr>
+              <tr><td>\(e^{x}\)</td><td>\(e^{x}\)</td><td class="gap">⇒</td><td class="anti">\(\int e^{x}dx\)</td><td class="anti">\(e^{x}+C\)</td></tr>
+              <tr><td>\(\dfrac{a^{x}}{\ln a}\)</td><td>\(a^{x}\)</td><td class="gap">⇒</td><td class="anti">\(\int a^{x}dx\) (\(a>0,\ a\ne1\))</td><td class="anti">\(\dfrac{a^{x}}{\ln a}+C\)</td></tr>
+              <tr><td>\(\sin x\)</td><td>\(\cos x\)</td><td class="gap">⇒</td><td class="anti">\(\int \cos x\,dx\)</td><td class="anti">\(\sin x+C\)</td></tr>
+              <tr><td>\(\cos x\)</td><td>\(-\sin x\)</td><td class="gap">⇒</td><td class="anti">\(\int (-\sin x)\,dx\)</td><td class="anti">\(\cos x+C\)</td></tr>
+              <tr><td>\(-\cos x\)</td><td>\(\sin x\)</td><td class="gap">⇒</td><td class="anti">\(\int \sin x\,dx\)</td><td class="anti">\(-\cos x+C\)</td></tr>
+              <tr><td>\(\operatorname{tg}x\)</td><td>\(\dfrac1{\cos^2x}\)</td><td class="gap">⇒</td><td class="anti">\(\int \dfrac{dx}{\cos^2x}\)</td><td class="anti">\(\operatorname{tg}x+C\)</td></tr>
+              <tr><td>\(-\operatorname{ctg}x\)</td><td>\(\dfrac1{\sin^2x}\)</td><td class="gap">⇒</td><td class="anti">\(\int \dfrac{dx}{\sin^2x}\)</td><td class="anti">\(-\operatorname{ctg}x+C\)</td></tr>
+              <tr><td>\(\arcsin x\)</td><td>\(\dfrac1{\sqrt{1-x^2}}\)</td><td class="gap">⇒</td><td class="anti">\(\int \dfrac{dx}{\sqrt{1-x^2}}\)</td><td class="anti">\(\arcsin x+C\)</td></tr>
+              <tr><td>\(\operatorname{arctg}x\)</td><td>\(\dfrac1{1+x^2}\)</td><td class="gap">⇒</td><td class="anti">\(\int \dfrac{dx}{1+x^2}\)</td><td class="anti">\(\operatorname{arctg}x+C\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note note--tip">
+          <strong>Запомните знаки.</strong> Производная \(\cos x\) равна \(-\sin x\), поэтому первообразная \(\sin x\) равна \(-\cos x\). Строки с \(\arcsin x\) и \(\operatorname{arctg}x\) относятся к профильному уровню.
+        </div>
+        <div class="note note--tip">
+          <strong>Степенная формула.</strong> Для \(f(x)=x^n\), \(n\ne-1\): \(\displaystyle\int x^n\,dx=\frac{x^{n+1}}{n+1}+C\). Это работает и для корней, и для дробей: \(\sqrt x=x^{1/2}\), \(\dfrac1{x^2}=x^{-2}\).
+        </div>
+      </section>
+
+      <section id="rules">
+        <h2><span class="num">3</span>Правила интегрирования</h2>
+        <div class="grid grid--3">
+          <article class="card card--accent"><h3>Сумма и разность</h3>\[\int (f\pm g)\,dx=\int f\,dx\pm\int g\,dx\]</article>
+          <article class="card card--accent"><h3>Постоянный множитель</h3>\[\int k f(x)\,dx=k\int f(x)\,dx\]</article>
+          <article class="card card--accent"><h3>Линейная замена</h3>\[\int f(kx+b)\,dx=\frac1k F(kx+b)+C\]<p class="muted">\(k\ne0\)</p></article>
+        </div>
+
+        <h3>Частные случаи замены \(kx+b\)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Интеграл</th><th>Результат</th></tr></thead>
+            <tbody>
+              <tr><td>\(\displaystyle\int (kx+b)^n dx\)</td><td>\(\dfrac{(kx+b)^{n+1}}{k(n+1)}+C,\ n\ne-1\)</td></tr>
+              <tr><td>\(\displaystyle\int \sin(kx+b)\,dx\)</td><td>\(-\dfrac1k\cos(kx+b)+C\)</td></tr>
+              <tr><td>\(\displaystyle\int \cos(kx+b)\,dx\)</td><td>\(\dfrac1k\sin(kx+b)+C\)</td></tr>
+              <tr><td>\(\displaystyle\int e^{kx+b}\,dx\)</td><td>\(\dfrac1k e^{kx+b}+C\)</td></tr>
+              <tr><td>\(\displaystyle\int \frac{dx}{kx+b}\)</td><td>\(\dfrac1k\ln|kx+b|+C\)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--warn">
+          <strong>Типичные ошибки</strong>
+          <ul>
+            <li>Забыли множитель \(\frac1k\) при замене \(kx+b\).</li>
+            <li>Забыли \(+C\) в неопределённом интеграле.</li>
+            <li>Первообразная \(\sin x\) равна \(-\cos x\), а не \(\cos x\).</li>
+            <li>\(\int f g\,dx \ne \int f\,dx\cdot\int g\,dx\).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="newton">
+        <h2><span class="num">4</span>Формула Ньютона–Лейбница</h2>
+        <div class="formula-box">\[\int_a^b f(x)\,dx = F(b)-F(a) = F(x)\Big|_a^b\]</div>
+        <p>Здесь \(F\) — любая первообразная \(f\) на отрезке \([a;b]\). Постоянная \(C\) сокращается, поэтому её не пишут.</p>
+
+        <div class="grid grid--2">
+          <article class="card">
+            <h3>Свойства</h3>
+            <ul class="props">
+              <li>\(\displaystyle\int_a^a f\,dx=0\)</li>
+              <li>\(\displaystyle\int_a^b f\,dx=-\int_b^a f\,dx\)</li>
+              <li>\(\displaystyle\int_a^b f\,dx=\int_a^c f\,dx+\int_c^b f\,dx\)</li>
+              <li>\(\displaystyle\int_a^b kf\,dx=k\int_a^b f\,dx\)</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Геометрический смысл</h3>
+            <p>Если \(f(x)\ge0\) на \([a;b]\), интеграл равен площади криволинейной трапеции под графиком \(f\).</p>
+            <svg class="plot" viewBox="0 0 240 130" role="img" aria-label="Криволинейная трапеция">
+              <line x1="20" y1="110" x2="225" y2="110" class="ax"/>
+              <line x1="20" y1="110" x2="20" y2="10" class="ax"/>
+              <path d="M60 110 L60 70 Q110 20 190 50 L190 110 Z" class="area"/>
+              <path d="M20 85 Q110 5 215 45" class="curve"/>
+              <line x1="60" y1="110" x2="60" y2="70" class="ax"/>
+              <line x1="190" y1="110" x2="190" y2="50" class="ax"/>
+              <text x="56" y="124" class="lbl">a</text>
+              <text x="186" y="124" class="lbl">b</text>
+              <text x="200" y="38" class="lbl">y = f(x)</text>
+              <text x="108" y="92" class="lbl lbl--s">S</text>
+            </svg>
+          </article>
+        </div>
+
+        <h3>Алгоритм вычисления</h3>
+        <ol class="steps">
+          <li>Найти первообразную \(F(x)\).</li>
+          <li>Подставить верхний предел: \(F(b)\).</li>
+          <li>Подставить нижний предел: \(F(a)\).</li>
+          <li>Вычесть: \(F(b)-F(a)\).</li>
+        </ol>
+      </section>
+
+      <section id="examples">
+        <h2><span class="num">5</span>Разбор типовых примеров</h2>
+        <p class="muted">Попробуйте решить сами, затем раскройте подробное решение.</p>
+        <div id="ref-examples"></div>
+      </section>
+
+      <section id="algorithm">
+        <h2><span class="num">6</span>Мини-алгоритм решения</h2>
+        <ol class="steps steps--big">
+          <li>Упростите подынтегральное выражение: раскройте скобки, представьте корни и дроби как степени.</li>
+          <li>Разбейте на слагаемые и вынесите числовые множители.</li>
+          <li>Найдите первообразную каждого слагаемого по таблице.</li>
+          <li>Если аргумент имеет вид \(kx+b\), добавьте множитель \(\frac1k\).</li>
+          <li>Неопределённый интеграл: допишите \(+C\). Определённый: подставьте пределы по Ньютону–Лейбницу.</li>
+          <li>Проверьте дифференцированием.</li>
+        </ol>
+      </section>
+    </div>
+
+    <!-- ===== ВКЛАДКА: ДОМАШНЕЕ ЗАДАНИЕ ===== -->
+    <div class="panel" data-panel="hw" hidden>
+      <section class="hero">
+        <h1>Домашнее задание</h1>
+        <p>10 задач по возрастанию сложности. Сначала решите самостоятельно, затем раскройте подробное решение.</p>
+      </section>
+      <div class="hw-intro"><strong>Как работать.</strong> Для неопределённых интегралов проверяйте результат дифференцированием и не забывайте \(+C\). Для определённых интегралов используйте формулу Ньютона–Лейбница.</div>
+      <section><div id="hw-list"></div></section>
+      <section>
+        <h2>Сводка ответов</h2>
+        <div class="card"><ol class="answers" id="hw-answers"></ol></div>
+      </section>
+    </div>
+
+    <!-- ===== ВКЛАДКА: ПРИМЕНЕНИЕ ===== -->
+    <div class="panel" data-panel="practice" hidden>
+      <section class="hero">
+        <h1>Зачем нужны интегралы</h1>
+        <p>Интеграл «собирает» результат из бесконечно малых частей. Везде, где нужно найти накопленную величину: путь, работу, площадь, объём, заряд, — работает интеграл.</p>
+        <div class="hero__formula">\[\text{результат}=\int_a^b(\text{скорость изменения})\,dx\]</div>
+      </section>
+
+      <section>
+        <h2>Главная идея</h2>
+        <div class="grid grid--2">
+          <article class="card">
+            <h3>Производная</h3>
+            <p>Показывает, <strong>как быстро</strong> что-то меняется: скорость, сила тока, мощность.</p>
+          </article>
+          <article class="card">
+            <h3>Интеграл</h3>
+            <p>Показывает, <strong>сколько всего</strong> накопилось за промежуток: путь, заряд, работу.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Где применяется</h2>
+        <div class="grid grid--2">
+          <article class="card app-card">
+            <div class="ico">🏃</div><h3>Физика: путь по скорости</h3>
+            <p>Если известна скорость \(v(t)\), пройденный путь:</p>
+            \[S=\int_{t_1}^{t_2} v(t)\,dt\]
+          </article>
+          <article class="card app-card">
+            <div class="ico">🔧</div><h3>Механика: работа переменной силы</h3>
+            <p>Когда сила зависит от положения (например, пружина):</p>
+            \[A=\int_{x_1}^{x_2} F(x)\,dx\]
+          </article>
+          <article class="card app-card">
+            <div class="ico">⚡</div><h3>Электричество: заряд по току</h3>
+            <p>Сила тока — скорость изменения заряда:</p>
+            \[q=\int_{t_1}^{t_2} I(t)\,dt\]
+          </article>
+          <article class="card app-card">
+            <div class="ico">📐</div><h3>Геометрия: площадь и объём</h3>
+            <p>Площадь под графиком и объём тела вращения вокруг оси \(Ox\):</p>
+            \[S=\int_a^b f\,dx,\qquad V=\pi\int_a^b f^2(x)\,dx\]
+          </article>
+          <article class="card app-card">
+            <div class="ico">💹</div><h3>Экономика: накопленный результат</h3>
+            <p>Если известна скорость роста затрат или дохода (предельная величина) \(r(t)\), то накопленная за период сумма:</p>
+            \[\int_{t_1}^{t_2} r(t)\,dt\]
+          </article>
+          <article class="card app-card">
+            <div class="ico">🧪</div><h3>Медицина и химия</h3>
+            <p>Площадь под кривой «концентрация вещества — время» используют, чтобы оценить общее воздействие препарата на организм.</p>
+          </article>
+          <article class="card app-card">
+            <div class="ico">🎲</div><h3>Вероятность и статистика</h3>
+            <p>Для непрерывной случайной величины с плотностью \(p(x)\) вероятность попадания в отрезок:</p>
+            \[P(a\le X\le b)=\int_a^b p(x)\,dx\]
+          </article>
+          <article class="card app-card">
+            <div class="ico">💻</div><h3>Информатика и графика</h3>
+            <p>Численное интегрирование применяют в физических движках, моделировании света и в анализе сигналов. Основа — тот же принцип суммирования малых частей.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Четыре задачи «из жизни»</h2>
+        <p class="muted">Это те же вычисления по Ньютону–Лейбницу, только с физическим смыслом.</p>
+        <div id="practice-examples"></div>
+      </section>
+
+      <section>
+        <h2>Что будет в вузе</h2>
+        <p>Школьный интеграл — это начало. Ниже ориентировочная карта тем, которые обычно встречаются в технических, естественно-научных и экономических программах. Точный набор и порядок зависят от вуза и направления.</p>
+        <div class="years">
+          <article class="year">
+            <h3>Математический анализ: продолжение</h3>
+            <ul>
+              <li>Методы интегрирования: замена переменной, <strong>интегрирование по частям</strong>, дроби.</li>
+              <li><strong>Несобственные интегралы</strong> (бесконечные пределы, разрывы).</li>
+              <li>Приближённые вычисления: формулы прямоугольников, трапеций, Симпсона.</li>
+            </ul>
+            <p>Пример: \(\displaystyle\int x e^x\,dx=(x-1)e^x+C\) — берётся по частям, табличных формул для него недостаточно.</p>
+          </article>
+          <article class="year">
+            <h3>Функции нескольких переменных</h3>
+            <ul>
+              <li><strong>Двойные и тройные интегралы</strong>: площади, объёмы, массы тел.</li>
+              <li>Криволинейные и поверхностные интегралы.</li>
+              <li>Частные производные и градиент.</li>
+            </ul>
+            <p>Пример: \(\displaystyle V=\iint\limits_D f(x,y)\,dx\,dy\) — объём под поверхностью.</p>
+          </article>
+          <article class="year">
+            <h3>Дифференциальные уравнения</h3>
+            <ul>
+              <li>Уравнения, где неизвестна функция, а известна связь её производных.</li>
+              <li>Моделирование роста, охлаждения, колебаний, электрических цепей.</li>
+            </ul>
+            <p>Простейшее: \(y'=f(x)\) решается именно интегрированием: \(y=\int f(x)\,dx\).</p>
+          </article>
+          <article class="year">
+            <h3>Ряды и анализ сигналов</h3>
+            <ul>
+              <li>Числовые и степенные ряды, разложение в ряд Тейлора.</li>
+              <li>Ряды и преобразование Фурье, разложение сигнала на частоты.</li>
+            </ul>
+          </article>
+          <article class="year">
+            <h3>Теория вероятностей и статистика</h3>
+            <ul>
+              <li>Плотность распределения, математическое ожидание \(M(X)=\int x\,p(x)\,dx\).</li>
+              <li>Нормальное распределение и вероятности через интегралы.</li>
+            </ul>
+          </article>
+          <article class="year">
+            <h3>Прикладные и специальные курсы</h3>
+            <ul>
+              <li>Физика: электродинамика, механика, термодинамика.</li>
+              <li>Инженерия: сопротивление материалов, теория управления.</li>
+              <li>Экономика и данные: оптимизация, модели роста, основы машинного обучения.</li>
+            </ul>
+          </article>
+        </div>
+        <div class="tags">
+          <span class="tag">по частям</span><span class="tag">несобственные интегралы</span><span class="tag">двойные интегралы</span>
+          <span class="tag">дифференциальные уравнения</span><span class="tag">ряды</span><span class="tag">Фурье</span><span class="tag">вероятность</span>
+        </div>
+        <div class="note note--tip"><strong>Как подготовиться уже сейчас.</strong> Хорошо знайте таблицу производных и первообразных, уверенно делайте линейную замену и всегда проверяйте ответ дифференцированием. Именно эти навыки в вузе используются в каждой теме.</div>
+      </section>
+    </div>
+
+  </main>
+</div>
+
+<button class="to-top" id="toTop" type="button" aria-label="Наверх">↑</button>
+</body>
+</html>
