@@ -1,3 +1,4 @@
+﻿// Логика сайта: отрисовка задач, вкладки, тема, таблица первообразных, формулы KaTeX
 document.addEventListener('DOMContentLoaded', () => {
 
   // Карточки с подробными решениями
@@ -97,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.querySelectorAll('details').forEach(d => d.addEventListener('toggle', updateToggleLabel));
 
-  // Печать
+  // Печать: раскрываем все решения
   document.getElementById('printBtn').addEventListener('click', () => {
     document.querySelectorAll('details').forEach(d => (d.open = true));
     window.print();
